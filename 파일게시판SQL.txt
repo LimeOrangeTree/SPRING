@@ -1,0 +1,59 @@
+--hr/hr
+--member테이블
+--mem_id/mem_pw/mem_nick
+--hongId/1234/의적
+--dongId/1234/지킴이
+
+
+
+conn hr/hr
+	
+	DROP TABLE FILEBOARD;
+	DROP TABLE ~~~~~~;
+	
+	--글정보
+	CREATE TABLE FILEBOARD(
+		FB_NO				NUMBER(10) 
+							constraint FILEBOARD_fbno_pk  Primary key, --글번호
+		FB_TITLE		VARCHAR2(100), --제목
+		FB_WRITER		VARCHAR2(100), --글쓴이
+		FB_BODY			CLOB, --내용
+		FB_DATE			DATE, 					--작성일
+		FB_PW				VARCHAR2(100), 	--비밀번호
+		FB_HIT			NUMBER(5),  		--조회수
+		FB_ISSHOW  	CHAR(1)					--노출여부  ('Y':노출 | 'N':비노출)
+	);
+	
+	INSERT INTO
+		FILEBOARD 
+	VALUES( ( SELECT NVL(MAX(FB_NO),0)+1
+	          FROM   FILEBOARD )
+	,'제목용1','dongId','내용테스트1',SYSDATE,'1234',0,'Y');	
+	
+	
+	INSERT INTO
+		FILEBOARD 
+	VALUES( ( SELECT NVL(MAX(FB_NO),0)+1
+	          FROM   FILEBOARD )
+	,'제목용2','hongId','내용테스트2',SYSDATE,'1234',0,'Y');	
+	
+	--첨부파일정보
+	CREATE TABLE fileattach(
+		FA_NO			NUMBER(10) 
+					constraint fileattach_fano_pk  Primary key, --파일번호
+		FA_ORINO	NUMBER(10), --글번호
+		FA_PATH		VARCHAR2(200),	--파일의 저장경로
+		FA_OriName		VARCHAR2(200),	--파일의 원래이름
+		FA_SaveName		VARCHAR2(200),	--파일의 저장이름
+		FA_SIZE		NUMBER(12)	--파일의 사이즈
+	);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

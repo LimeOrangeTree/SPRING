@@ -1,0 +1,98 @@
+*DB연동 + 커넥션 풀 + myBatis연결
+1. 필요한 라이브러리 가지고 오기
+  pom.xml에 코드추가
+	====아래코드는 <dependencies>요소 이전에 추가
+	<!--	ojdbc6.jar 파일을 제공하는 CDN 네트워크를 지정	-->
+	<repositories>
+		<repository>
+			<id>codelds</id>
+			<url>https://code.lds.org/nexus/content/groups/main-repo</url>
+		</repository>
+	</repositories>
+	
+	
+	====아래코드는 <dependencies> </dependencies>  요소내부에 추가
+	<!--	스프링에서 컨텍션 풀을 설치하기 위한 라이브러리	-->
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-jdbc</artifactId>
+		<version>${org.springframework-version}</version>
+	</dependency>
+	<!--	실제 컨넥션 풀을 처리하기 위한 라이브러리	-->
+	<dependency>
+		<groupId>commons-dbcp</groupId>
+		<artifactId>commons-dbcp</artifactId>
+		<version>1.4</version>
+	</dependency>
+	<!--	우리가 사용하는 오라클과 연결하는 드라이버 라이브러리	-->
+	<dependency>
+		<groupId>com.oracle</groupId>
+		<artifactId>ojdbc6</artifactId>
+		<version>11.2.0.3</version>
+	</dependency>
+	
+	
+	
+2. 커넥션 풀 설치
+	아래의 xml문서중에 아래코드를 추가
+	톰캣서버의 xml문서
+	스프링의 web.xml문서(sub-context.xml)
+	      do-context.xml
+
+	<!--	컨넥션 풀 설정을 위한 작업 부분	-->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521/xe"/>
+		<property name="username" value="hr"/>
+		<property name="password" value="hr"/>
+	</bean>
+
+
+3. ORM프로그램의 일종인 myBatis연결
+	3-1) 라이브러리를 가지고 온다
+	아래코드를 pom.xml에 코드추가
+	<!--	myBatis를 위한 라이브러리	-->
+	<dependency>
+		<groupId>org.mybatis</groupId>
+		<artifactId>mybatis</artifactId>
+		<version>3.2.2</version>
+	</dependency>
+	<!--	myBatis와 스프링을 연결하는 라이브러리	-->
+	<dependency>
+		<groupId>org.mybatis</groupId>
+		<artifactId>mybatis-spring</artifactId>
+		<version>1.2.0</version>
+	</dependency>
+
+
+	3-2) 환경설정파일에 myBatis를 등록
+	sub-context.xml문서에 아래코드를 추가
+	<!-- myBatis 등록 부분이다 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- myBatis를 위한 환결설정파일이 어디에 어떤이름으로 만들어져있는지 지정 -->
+		<property name="configLocation" >
+				<value>classpath:/com/duri/myBatis/myBatis-config.xml</value>
+		</property>
+		<property name="dataSource" ref="dataSource" />	
+	</bean>	
+	
+	3-3) myBatis를 위한 환경설정파일을 지정
+			 환경설정파일은 아무곳에나 넣고싶은 이름으로 만들어도 된다
+	     com.duri.myBatis>myBatis-config.xml 생성
+
+4. 연결이 되었는지 테스트
+
+   <!DOCTYPE mapper PUBLIC 
+				"-//mybatis.org//DTD Mapper 3.0//EN" 
+				"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,324 @@
+*Spring이란?
+ 웹을 개발하기위해 많이 사용하는 mvc패턴을
+ 편하게 처리하도록 도와주는 프레임워크중의 하나.
+ 
+*DI(Dependency Injection)
+ => 객체를 사용할 때 직접 new하지않고
+		외부에서 생성된 객체를
+		빌려와서 사용하는 기법
+
+ Study\내용\spring\자료
+워크스페이스에 아래 구조로 폴더를 생성하자
+Spring1
+	src
+	pom.xml붙여넣기
+		main
+			java
+			resources 폴더생성
+				applicationContext.xml
+	
+----------------------------------------------------
+*AOP (AOP)  자동주입
+ => DI로 처리된 객체를 필요한 곳에서 사용할 때
+ 변수만 선언하면  자동으로 new된 객체를
+ 사용할 수 있도록 하는 방법
+ 
+Spring2
+	src
+	pom.xml붙여넣기
+		main
+			java
+			resources 폴더생성
+				appCtx.xml 
+ 
+*자동주입 방법
+1. @Autowired
+		클래스명  클래스참조변수명;
+		=> DI로 선언된 객체의 클래스명을 이용해서 자동주입 방법
+		
+2.	@Resource(name="id명")
+		클래스명  클래스참조변수명;
+		=> DI로 선언된 객체의 id명을 이용해서 자동주입 방법
+
+3. set함수이용
+	1) 일반적인 변수선언
+		 private MemberDAO dao;
+	2) @Autowired한
+    set함수이용해서 변수에  값을 설정한다
+	  @Autowired 
+		public void setMemberDAO(MemberDAO dao){
+			this.dao=dao;
+		}
+
+
+ *참고
+	<bean class="DAO.MemberDAO"  id="memDAO"></bean>
+   ==> new MemberDAO() 기본생성자를 이용해서 new시킨다
+
+  생성자 함수에 파라미터 전달하기 
+  <bean class="DAO.MemberDAO"  id="memDAO">
+		<constructor-arg   value="적당한값"/>
+		<constructor-arg   value="적당한값"/>
+	</bean>
+	==> new MemberDAO("대한","민국")
+
+-----------------------------------------
+*자바소스를 이용한  BEAN 처리
+ => DI로 처리된 객체를 필요한 곳에서 사용할 때
+ 변수만 선언하면  자동으로 new된 객체를
+ 사용할 수 있도록 하는 방법
+ 
+방법 1. 의존주입에 사용할 객체를 생성하는 클래스
+			 @Configuration 이용해서 제작
+		2. DI에 사용할 객체는  setXxx()를 이용해서 제공한다
+		   이 함수는 @Bean하여  Bean객체 기능을 하도록 지시한다
+
+Spring3
+	src
+	pom.xml붙여넣기
+		main
+			java
+			resources 폴더생성
+				main-conf.xml 
+
+	main>main.java -> main() run~
+	config>TestConfig.java <- 자바소스를 이용한  BEAN 처리
+  test>  TestDAO.java    String msg/getter&setter/showMsg()
+	       TestService.java print{  TestDAO의 setter/showMsg() }
+
+==================================================
+*Spring project만들기
+
+생성하는 방법
+1. plug in방식
+	 일반 프로젝트 생성 -> 필요한 라이브러리를 설치
+2. Maven  방식
+   중앙 레파지토리에서    필요한 라이브러리를 불러와서 사용
+
+Spring project만들기
+1. 로컬 레파지토리 생성하기(선택)
+   http://maven.apache.org/download.cgi 에 가서 Maven을 다운받는다.
+   https://archive.apache.org/dist/maven/maven-3/
+	 시스템> 고급시스템설정 > 고급 > 환경변수
+	 변수이름 MAVEN_HOME
+	 변수 값 E:\maven
+	 
+	 변수이름 path
+	 변수 값 ~~~;%MAVEN_HOME%\bin;
+
+	확인>
+	cmd창에서 > mvn -version
+	         설치한 버전나오면 된다
+
+2. 이클립스에서 STS설치
+  help -> market place -> sts검색 후 설치
+	SpringSourceSpringSource Tool Suite
+
+3. 이클립스에서 maven연동
+  help -> market place -> Maven검색 확인
+	window->Preferences -> Maven -> Installations
+	add버튼 눌러서 압축을 푼 maven폴더를 선택
+ 
+4. Spring project생성
+
+	프로젝트명		SpringWeb
+	프로젝트URL  com.iedu.uri
+
+	Spring -> Spring Legacy Project->
+	Spring MVC Project
+
+5. 톰캣 서버 설치 및 설정
+	server.xml
+	web.xml
+
+============================================
+*Spring Framework동작원리
+1. 서버가 start되면
+ src>main>webapp>WEB-INF의 web.xml파일읽어들여
+ 스프링 프로젝트의 환경을 읽어들인다
+
+	pom.xml에 아래 내용 추가
+	<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.3.1</version>
+	</dependency>
+	
+	<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.4</version>
+	</dependency>
+
+참고
+	특정 요청에 대해서 환경설정을 지정하려면 xml문서에서 환경설정을 해주면 된다
+	web.xml 				->
+	sub-context.xml	->프로젝트 전체에 필요한 환경설정을 하는 문서
+  do-context.xml  ->특정    요청에 필요한 환경설정을 하는 문서
+
+
+-- 원본 web.xml문서 시작----------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring/root-context.xml</param-value>
+	</context-param>
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Processes application requests -->
+	<!-- DispatcherServlet을 등록하는 부분 -->
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- 해당 DispatcherServlet의 환경설정 파일을 지정하는 부분-->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/servlet-context.xml</param-value>
+			<!-- 폴더명이나 파일명은 마음대로 바꿔도 된다
+					 단, /WEB-INF/ 폴더 하위에만 만들면 된다-->
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+		
+	<!-- 선언한 DispatcherServlet이 어떤 요청을 받으면 실행할지를 지정하는 부분 -->	
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
+</web-app>
+-- 원본 web.xml문서 끝----------------------------------------------------------------------------
+
+	<!-- POST방식의 한글깨짐 방지 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+================================================================\
+*뷰지정방법 3가지
+1.리턴유형이 void인 경우
+ 	=>요청내용과 일치
+2.리턴유형이 String인 경우
+  =>기존의 jsp프로젝트에서 사용하던 방식
+	=>리턴내용과 일치
+3.리턴유형이 ModelAndView인 경우
+	=>스프링에서 권장하는 방식
+	ModelAndView mv = new ModelAndView();
+	mv.setViewName("뷰문서명"); //리턴유형이 String인 경우와 동일방식으로 지정
+
+================================================================\
+*RequestMapping() 처리방법
+1. 정확한 요청을 등록
+2. 하나의 함수가  여러 개의 요청을 동시에 처리할 수 있도록 하는 방법
+	 =>해결법
+	 @RequestMapping({"rm/exrm1", "rm/exrm2"})
+	 http://localhost/uri/rm/exrm1.do
+	 http://localhost/uri/rm/exrm2.do
+3. 문자를 이용하여 여러 개의 요청을 동시에 처리할 수 있도록 하는 방법
+	 예) *문자 =>일반문자
+   @RequestMapping("board/board*")
+	 @RequestMapping("board/boardList")
+	 @RequestMapping("board/boardView")
+	 
+	 예) **문자=>폴더전체
+	 @RequestMapping("board/**/View")
+	 @RequestMapping("board/reboard/View")
+	 @RequestMapping("board/notice/amdin/View")
+
+
+참고
+	@RequestMapping(value="요청내용")
+	@RequestMapping(path="요청내용")
+
+--보조방법
+4. 요청형태( POST/GET)에 따라서 요청함수를 지정
+	@RequestMapping(value="요청내용", 
+	                method=RequestMethod.GET)
+5. 특정파라미터가 존재하는 경우에만 요청함수를 지정 
+	@RequestMapping(value="요청내용",
+	                params={"nowPage"})
+	@RequestMapping(value="요청내용",
+	                params={"oriNo","nowPage"})
+
+  @RequestMapping(value="요청내용",
+	                params={"nowPage=1"})
+
+	@RequestMapping(value="요청내용",
+	                params={"!nowPage"})
+
+	문제>
+		 params={"param1=10","param2","!param3"}
+
+6.@PathVariable을 이용한 매핑방법
+  **문자처리하던 부분에 {키값}으로 정의한다
+	@RequestMapping("board/{키값}/View")
+
+  @RequestMapping("board/{userID}/View") 
+  @public void qqq(@PathVariable String userID){
+	}
+
+================================================================
+
+*파라미터 받는 방법
+1. request를 이용하는 방법
+	=> 기존의 (request객체의) getParameter("파라미터명")
+	
+2. VO를 			이용하는 방법
+	순서 1. 먼저 VO클래스를 만들어야 한다
+		  2. VO클래스를 요청함수의 파라미터로 가져와야 한다
+			
+3. @RequestParam 이용
+	1) 모든 파라미터를 한번에 받는 방식
+			Map
+		요청함수의 매개변수로  @RequestParam Map 변수명
+	2) 일부 파라미터를 받는 방식
+		 장점 : 자동형변환
+		요청함수의 매개변수로  @RequestParam(value="키값") 변수타입 변수명
+
+  참고 파라미터가 넘어오지 않을 위험성이 존재하는 경우
+			@RequestParam(value="키값", required=false) 변수타입 변수명
+
+  참고 파라미터가 넘어오지 않을 위험성이 존재하는 경우이면서
+	   다른 값으로 대체하고 싶다면
+			@RequestParam(value="키값", required=false, defaultValue=?) 변수타입 변수명
+
+================================================================
+*모델 지정하는 방법
+
+1) 기존의 request.setAttribute() 방법
+   request.setAttribute("키값", 데이터)
+2) ModelAndView 클래스 이용하는 방법
+	 -=> 요청함수의 리턴유형이 반드시 ModelAndView여야 한다
+	ModelAndView mv = new ModelAndView();
+	mv.addObject("키값", 데이터);
+	//mv.setViewName("뷰문서명");  //뷰지정
+	 
+
+
+
+
+
+
+
